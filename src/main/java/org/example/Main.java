@@ -21,29 +21,35 @@ public class Main {
 
         app.get("/", (req, res) -> {
             res.send(Paths.get(Paths.get("").toAbsolutePath() +"\\src\\main\\html\\index.html"));
-        }).listen();
+        });
         app.get("/criar", (req, res) -> {
             res.send(Paths.get(Paths.get("").toAbsolutePath() +"\\src\\main\\html\\criar.html"));
-        }).listen();
+        });
         app.get("/login", (req, res) -> {
             res.send(Paths.get(Paths.get("").toAbsolutePath() +"\\src\\main\\html\\login.html"));
-        }).listen();
+        });
         app.get("/postar", (req, res) -> {
             res.send(Paths.get(Paths.get("").toAbsolutePath() +"\\src\\main\\html\\postar.html"));
-        }).listen();
+        });
         app.get("/mural", (req, res) -> {
             res.send(Paths.get(Paths.get("").toAbsolutePath() +"\\src\\main\\html\\mural.html"));
-        }).listen();
+        });
         app.get("/ver_mural", (req, res) -> {
             res.send(Paths.get(Paths.get("").toAbsolutePath() +"\\src\\main\\html\\ver_mural.html"));
-        }).listen();
+        });
+        app.get("/seguir", (req, res) -> {
+            res.send(Paths.get(Paths.get("").toAbsolutePath() +"\\src\\main\\html\\seguir.html"));
+        });
+        app.get("/script.js", (req, res) -> {
+            res.send(Paths.get(Paths.get("").toAbsolutePath() +"\\src\\main\\html\\script.js"));
+        });
 
         app.post("/registrar", (req, res) ->{
             if(papa.criarUsuario(req.getFormQuery("nome")))
                 res.send("Usuario criado com sucesso");
             else
                 res.send("Já existe um usuario com este nome");
-        }).listen();
+        });
 
         app.post("/logar", (req, res) ->{
             Usuario us =  papa.getUsuario(req.getFormQuery("nome"));
@@ -56,12 +62,12 @@ public class Main {
             }
             else
                 res.send("Não existe um usuario com este nome");
-        }).listen();
+        });
 
         app.post("/api/postar", (req, res) ->{
             Usuario us = papa.getUsuario(req.getCookie("usuarioNome").getValue());
             if(us == null) {
-                res.redirect("/?msg=Usuario não está logado");
+                res.redirect("/?msg=Usuario invalido");
             }
             else if(!us.isLogado()){
                 res.redirect("/?msg=Usuario não está logado");
@@ -73,7 +79,24 @@ public class Main {
             }
 
 
-        }).listen();
+        });
+        app.post("/api/seguir", (req, res) ->{
+            Usuario us = papa.getUsuario(req.getCookie("usuarioNome").getValue());
+            Usuario us2 = papa.getUsuario(req.getFormQuery("nome"));
+            if(us == null || us2 == null) {
+                res.redirect("/?msg=Usuario invalido");
+            }
+            else if(!us.isLogado()){
+                res.redirect("/?msg=Usuario não está logado");
+            }
+            else{
+                us.seguir(us2);
+                papa.salvar();
+                res.redirect("/?msg=seguindo "+us2.getNome()+" com sucesso");
+            }
+
+
+        });
 
         app.post("/api/redirect_mural", (req, res) ->{
             String nome = req.getParam("nome");
@@ -92,7 +115,7 @@ public class Main {
             else{
                 res.send(String.valueOf(us.getPostagens().size()));
             }
-        }).listen();
+        });
 
         app.get("/get-post-nome", (req, res) ->{
             String nome = req.getQuery("nome");
@@ -105,7 +128,7 @@ public class Main {
             else{
                 res.send(us.getPostagens().get(nmr).getAutor().getNome());
             }
-        }).listen();
+        });
         app.get("/get-post-texto", (req, res) ->{
             String nome = req.getQuery("nome");
             int nmr = Integer.parseInt(req.getQuery("nmr"));
@@ -117,14 +140,38 @@ public class Main {
             else{
                 res.send(us.getPostagens().get(nmr).getTexto());
             }
-        }).listen();
+        });
+
+        app.get("/get-seguindo-qnt", (req, res) ->{
+            String nome = req.getQuery("nome");
+            Usuario us = papa.getUsuario(nome);
+            if(us == null){
+                res.send("0");
+            }
+            else{
+                res.send(String.valueOf(us.getSeguindo().size()));
+            }
+        });
+        app.get("/get-seguindo-nome", (req, res) ->{
+            String nome = req.getQuery("nome");
+            int nmr = Integer.parseInt(req.getQuery("nmr"));
+            Usuario us = papa.getUsuario(nome);
+            if(us == null){
+                res.send("0");
+            }
+            else{
+                res.send(us.getSeguindo().get(nmr).getNome());
+            }
+        });
+
 
        app.get("/sair", (req, res) ->{
            Usuario us = papa.getUsuario(req.getCookie("usuarioNome").getValue());
            if(us != null)
                us.setLogado(false);
            System.out.println("Usuario deslogado com sucesso");
-       }).listen();
+           res.redirect("/?msg=USuario deslogado com sucesso");
+       });
 
 
 

@@ -9,19 +9,10 @@
 </head>
 
 <body>
-
-<h1 id="mural-title" class="text-center ">Mural de </h1>
-
-<div id="posts" class="text-center">
-
-</div>
-
-<script src="/script.js">
-</script>
-<script>
-    loadMural()
-    loadMuralSeguindo()
-</script>
+<form action="/api/seguir" method="POST" class="text-center my-auto">
+    <input type="text" placeholder="Usuario que deseja seguir" name="nome" id="nome">
+    <button type="submit" class="btn btn-primary">enviar</button>
+</form>
 </body>
 
 </html>
