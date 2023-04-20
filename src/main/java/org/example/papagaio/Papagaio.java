@@ -85,8 +85,7 @@ public class Papagaio implements Serializable{
             ObjectInputStream objetoParaCarregar = new ObjectInputStream(arquivoParaCarregar);
             return (Papagaio) objetoParaCarregar.readObject();
         } catch (IOException | ClassNotFoundException e) {
-            salvar();
-            throw new RuntimeException(e);
+            return new Papagaio();
         }
     }
 

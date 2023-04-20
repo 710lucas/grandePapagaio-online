@@ -1,20 +1,24 @@
-function loadMural(){
+var usuario
+
+function loadUsuarioAsQuery(){
     const queryString = window.location.search;
 
     const urlParams = new URLSearchParams(queryString);
 
-    const usuario = urlParams.get('usuario')
+    usuario = urlParams.get('usuario')
+}
+
+function setUsuario(usu){
+    usuario = usu
+}
+
+function loadMural(){
     document.getElementById("mural-title").innerText += " "+usuario
     applyPosts(usuario)
     }
 
 
 async function loadMuralSeguindo(){
-    const queryString = window.location.search;
-
-    const urlParams = new URLSearchParams(queryString);
-
-    const usuario = urlParams.get('usuario')
     var res = await fetch("/get-seguindo-qnt?nome="+usuario)
     var qntSeguindo = await res.text()
     qntSeguindo = parseInt(qntSeguindo)

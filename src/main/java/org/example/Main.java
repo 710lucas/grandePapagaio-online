@@ -5,6 +5,7 @@ import express.utils.Status;
 import org.example.papagaio.Papagaio;
 import org.example.papagaio.Usuario;
 
+import java.io.EOFException;
 import java.io.File;
 import java.nio.file.Path;
 import java.nio.file.Paths;
@@ -46,9 +47,9 @@ public class Main {
 
         app.post("/registrar", (req, res) ->{
             if(papa.criarUsuario(req.getFormQuery("nome")))
-                res.send("Usuario criado com sucesso");
+                res.redirect("/?msg=Usuario criado com sucesso");
             else
-                res.send("Já existe um usuario com este nome");
+                res.redirect("/?msg=Já existe um usuario com este nome");
         });
 
         app.post("/logar", (req, res) ->{
@@ -57,11 +58,10 @@ public class Main {
                 Cookie cook = new Cookie("usuarioNome", us.getNome());
                 us.setLogado(true);
                 res.setCookie(cook);
-                res.send("Logado");
-                res.redirect("/");
+                res.redirect("/?msg=logado");
             }
             else
-                res.send("Não existe um usuario com este nome");
+                res.redirect("/?msg=Não existe um usuario com este nome");
         });
 
         app.post("/api/postar", (req, res) ->{
@@ -170,7 +170,8 @@ public class Main {
            if(us != null)
                us.setLogado(false);
            System.out.println("Usuario deslogado com sucesso");
-           res.redirect("/?msg=USuario deslogado com sucesso");
+           res.setCookie(new Cookie("usuarioNome", ""));
+           res.redirect("/?msg=Usuario deslogado com sucesso");
        });
 
 
