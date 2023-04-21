@@ -1,0 +1,1 @@
+web: java -jar out/artifacts/papagaio_onlin_jar/papagaio-online.jar
